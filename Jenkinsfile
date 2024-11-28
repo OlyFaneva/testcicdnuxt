@@ -24,8 +24,8 @@ pipeline {
                     echo "Installing dependencies and running tests"
                     sh '''
                         docker run --rm -v $PWD:/app -w /app node:18-alpine sh -c "
-                            npm install &&
-                            npm run test
+                            yarn install &&
+                            yarn run test
                         "
                     '''
                 }
