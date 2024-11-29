@@ -2,30 +2,38 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'olyfaneva/mon-pic'
-        DOCKER_TAG = 'latest'
-        REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
-        SSH_CREDENTIALS = credentials('vps')
+        DOCKER_IMAGE = 'votre-nom-image'
+        DOCKER_TAG = "${GIT_COMMIT.take(7)}"
+        SSH_CREDENTIALS = credentials('ssh-credentials')
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout SCM') {
             steps {
-                script {
-                    echo "Cloning repository: ${REPO_URL}"
-                    git url: "${REPO_URL}", branch: 'main'
-                }
+                checkout scm
             }
         }
 
         stage('Install Dependencies and Test') {
             steps {
                 script {
-                    echo "Installing dependencies and running tests"
                     sh '''
-                        docker run --rm -v $PWD:/app -w /app node:18-alpine sh -c "
-                            yarn install &&
-                            yarn run test
+                        docker run --rm \
+                        -v $PWD:/app \
+                        -w /app \
+                        node:18-alpine \
+                        sh -c "
+                            ls -l /app;
+                            cp /app/package.json /tmp/;
+                            ls -l /tmp;
+                            
+                            if [ ! -f /tmp/package.json ]; then
+                                echo 'Error: package.json not found';
+                                exit 1;
+                            fi;
+                            
+                            yarn install;
+                            yarn test
                         "
                     '''
                 }
@@ -35,23 +43,19 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building Docker image: ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    sh '''
+                    sh """
                         docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-                    '''
+                    """
                 }
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    echo "Pushing Docker image to Docker Hub"
-                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
-                        sh '''
-                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        '''
-                    }
+                withDockerRegistry([credentialsId: 'docker-hub', url: '']) {
+                    sh """
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    """
                 }
             }
         }
@@ -59,18 +63,19 @@ pipeline {
         stage('Deploy to VPS') {
             steps {
                 script {
-                    echo "Deploying to VPS"
-                    sh '''
-                        sshpass -p "${SSH_CREDENTIALS_PSW}" ssh -o StrictHostKeyChecking=no ${SSH_CREDENTIALS_USR}@89.116.111.200 << EOF
-                            docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
-                            docker stop my-app || true
-                            docker rm my-app || true
+                    sh """
+                        sshpass -p "${SSH_CREDENTIALS_PSW}" \
+                        ssh -o StrictHostKeyChecking=no \
+                        ${SSH_CREDENTIALS_USR}@89.116.111.200 \
+                        "
+                            docker pull ${DOCKER_IMAGE}:${DOCKER_TAG};
+                            docker stop my-app || true;
+                            docker rm my-app || true;
                             docker run -d --name my-app -p 80:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        EOF
-                    '''
+                        "
+                    """
                 }
             }
         }
     }
 }
-
