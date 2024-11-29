@@ -4,13 +4,23 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'votre-nom-image'
         DOCKER_TAG = "${GIT_COMMIT.take(7)}"
-        SSH_CREDENTIALS = credentials('vps')
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Debug Workspace') {
             steps {
-                checkout scm
+                script {
+                    sh '''
+                        echo "Répertoire de travail actuel :"
+                        pwd
+                        echo "\nContenu du répertoire :"
+                        ls -la
+                        echo "\nRecherche de package.json :"
+                        find . -name "package.json"
+                        echo "\nRecherche récursive :"
+                        find . -type f -name "package.json"
+                    '''
+                }
             }
         }
 
@@ -23,17 +33,23 @@ pipeline {
                         -w /app \
                         node:18-alpine \
                         sh -c "
-                            ls -l /app;
-                            cp /app/package.json /tmp/;
-                            ls -l /tmp;
+                            echo 'Contenu du répertoire dans le conteneur :';
+                            pwd;
+                            ls -la /app;
                             
-                            if [ ! -f /tmp/package.json ]; then
-                                echo 'Error: package.json not found';
+                            echo 'Recherche de package.json dans le conteneur :';
+                            find /app -name 'package.json';
+                            
+                            if [ -f /app/package.json ]; then
+                                echo 'package.json trouvé. Contenu :';
+                                cat /app/package.json;
+                                
+                                yarn install;
+                                yarn test;
+                            else
+                                echo 'ERREUR : package.json non trouvé';
                                 exit 1;
-                            fi;
-                            
-                            yarn install;
-                            yarn test
+                            fi
                         "
                     '''
                 }
@@ -75,6 +91,17 @@ pipeline {
                         "
                     """
                 }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sh '''
+                    echo "Nettoyage des ressources Docker"
+                    docker system prune -f
+                '''
             }
         }
     }
