@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'votre-nom-image'
         DOCKER_TAG = "${GIT_COMMIT.take(7)}"
-        SSH_CREDENTIALS = credentials('ssh-credentials')
+        SSH_CREDENTIALS = credentials('vps')
     }
 
     stages {
