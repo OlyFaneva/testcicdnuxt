@@ -8,13 +8,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN yarn install
 
 # Copier le reste des fichiers du projet
 COPY . .
 
 # Construire le projet Next.js
-RUN npm run build
+RUN yarn run build
 
 # Étape de production
 FROM node:18-alpine
@@ -26,11 +26,11 @@ WORKDIR /app
 COPY --from=builder /app ./
 
 # Installer les dépendances de production uniquement (facultatif pour optimiser)
-RUN npm install --omit=dev
+RUN yarn install --omit=dev
 
 # Exposer le port 3000
 EXPOSE 3000
 
 # Commande de démarrage
-CMD ["npm", "start"]
+CMD ["yarn", "dev"]
 
