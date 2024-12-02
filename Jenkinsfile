@@ -57,6 +57,16 @@ pipeline {
                 }
             }
         }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                script {
+                    echo "Running Ansible playbook"
+                    sh '''
+                        ansible-playbook -i /path/to/hosts.ini /path/to/deploy.yml
+                    '''
+                }
+            }
+        }
     }
 }
-
