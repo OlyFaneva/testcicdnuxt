@@ -5,26 +5,27 @@
   tasks:
     - name: Pull Docker image
       docker_image:
-        name: olyfaneva/projectnuxt
+        name: olyfaneva/front-end
         tag: latest
         source: pull
 
     - name: Stop old container if running
       docker_container:
-        name: my-app
+        name: front
+        image: olyfaneva/front-end:latest   # Ajout de l'image ici
         state: stopped
         restart_policy: no
 
     - name: Remove old container
       docker_container:
-        name: my-app
+        name: front
         state: absent
 
     - name: Run new container
       docker_container:
-        name: my-app
-        image: olyfaneva/projectnuxt:latest
+        name: front-end
+        image: olyfaneva/front-end:latest
         state: started
         restart_policy: always
         ports:
-          - "80:3000"
+          - "8090:3000"
