@@ -28,4 +28,4 @@
         state: started
         restart_policy: always
         ports:
-          - "3005:3000"
+          - "3002:3000"
