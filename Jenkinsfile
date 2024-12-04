@@ -51,7 +51,7 @@ pipeline {
                         docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                         docker stop front-end || true
                         docker rm front-end || true
-                        docker run -d --name front-end -p 8090:3000 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        docker run -d --name front-end -p 8080:3002 ${DOCKER_IMAGE}:${DOCKER_TAG}
 EOF
                     '''
                 }

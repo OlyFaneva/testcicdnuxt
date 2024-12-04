@@ -29,7 +29,7 @@ COPY --from=builder /app ./
 RUN yarn install --omit=dev
 
 # Exposer le port 3000
-EXPOSE 3000
+EXPOSE 3002
 
 # Commande de démarrage
 CMD ["yarn", "dev"]
