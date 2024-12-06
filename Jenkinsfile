@@ -63,7 +63,7 @@ EOF
                 script {
                     echo "Running Ansible playbook"
                     sh '''
-                        ansible-playbook -i hosts.ini deploy.yml
+                        ansible-playbook -i hosts.ini deploy.yml -vvv
                     '''
                 }
             }
