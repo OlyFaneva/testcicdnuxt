@@ -55,7 +55,7 @@ export default {
                 console.log("password not match")
             }
             else {
-                const { data } = useFetch('http://localhost:8000/api/registration', {
+                const { data } = useFetch('http://89.116.111.200:8008/api/registration', {
                     method: 'POST',
                     body: {
                         'email': this.email,

@@ -48,7 +48,7 @@ export default {
     },
     methods: {
         submit() {
-            const { data } = useFetch('http://localhost:8000/api/login', {
+            const { data } = useFetch('http://89.116.111.200:8008/api/login', {
                 method: 'POST',
                 body: {
                     'email': this.email,

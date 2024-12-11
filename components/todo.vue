@@ -1,10 +1,10 @@
 <script setup>
     const { data: productCount } = await useAsyncData("products" ,() =>  
-    $fetch("http://localhost:8000/api/all")
+    $fetch("http://89.116.111.200:8008/api/all")
      );
 // Ajout avec fecth
     //  const submit = () =>  {
-    //   $fetch("http://localhost:8000/api/store" , {
+    //   $fetch("http://89.116.111.200:8008/api/store" , {
     //     method: 'POST' ,
     //     body: {
     //       'content' : 'je vien du js sama'
@@ -16,7 +16,7 @@
     const refresh = () => refreshNuxtData("products")
 // Remove
 const remove = (id) => {
-  useFetch(`http://localhost:8000/api/suppr/${id}`, {
+  useFetch(`http://89.116.111.200:8008/api/suppr/${id}`, {
     method: 'DELETE'
   }).then((res) => {
     refresh();
@@ -28,7 +28,7 @@ const remove = (id) => {
 
 //  Ajout avec useFetch
 function submit(donne){
-  const { data, pending, error, refresh } =  useFetch('http://localhost:8000/api/store',{
+  const { data, pending, error, refresh } =  useFetch('http://89.116.111.200:8008/api/store',{
       method : 'POST' , 
       body : {
         'content' : donne
