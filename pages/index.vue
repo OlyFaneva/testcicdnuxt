@@ -5,7 +5,5 @@
 <template>
     <div>
         <accueil />
-
-
     </div>
 </template>
