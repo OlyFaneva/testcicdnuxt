@@ -17,7 +17,7 @@ const route = useRoute()
 let kim = route.params.id
 
 const { data: productCount } = await useAsyncData("products", () =>
-    $fetch(`http://localhost:8000/api/all/${kim}`)
+    $fetch(`http://89.116.111.200:8008/api/all/${kim}`)
 );
 
 console.log(productCount.content)
@@ -26,7 +26,7 @@ console.log(productCount.content)
 
 const update = (content) => {
     let kim = route.params.id
-    const { data } =  useFetch(`http://localhost:8000/api/updt/${kim}`,{
+    const { data } =  useFetch(`http://89.116.111.200:8008/api/updt/${kim}`,{
       method : 'PUT' , 
       body : {
         'content' : content
