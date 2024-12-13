@@ -68,6 +68,7 @@ function submit(donne){
             </div>
           </div>
           <div>
+          
                   <div v-for="item in productCount" :key="item.id" class="flex mb-4 items-center">
   
                       <p class="w-full text-grey-darkest font-semibold text-gray-600"> {{ item.content }} </p>
