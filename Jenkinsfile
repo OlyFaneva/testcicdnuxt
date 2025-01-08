@@ -6,6 +6,10 @@ pipeline {
         DOCKER_TAG = 'latest'
         REPO_URL = 'https://github.com/OlyFaneva/testcicdnuxt.git'
         SSH_CREDENTIALS = credentials('vps')
+        SMTP_HOST = 'smtp.gmail.com'
+        SMTP_PORT = '587'
+        SMTP_USER = 'olyrarivomanana@gmail.com'
+        SMTP_PASS = 'tkbnzycggxoskhwa'
     }
 
     stages {
@@ -29,7 +33,7 @@ pipeline {
             }
         }
 
-         stage('Scan Docker Image') {
+        stage('Scan Docker Image') {
             steps {
                 script {
                     echo 'Scanning Docker image for vulnerabilities'
@@ -43,7 +47,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    echo "Pushing Docker image to Docker Hub"
+                    echo 'Pushing Docker image to Docker Hub'
                     withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
                         sh '''
                             docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
@@ -53,14 +57,41 @@ pipeline {
             }
         }
 
-
         stage('Run Ansible Playbook') {
             steps {
                 script {
-                    echo "Running Ansible playbook"
+                    echo 'Running Ansible playbook'
                     sh '''
                         ansible-playbook -i hosts.ini deploy.yml -vvv
                     '''
+                }
+            }
+        }
+
+        post {
+            always {
+                script {
+                    def buildStatus = currentBuild.currentResult
+
+                    emailext(
+                    subject: "Pipeline ${env.JOB_NAME} - Build ${env.BUILD_NUMBER} : ${buildStatus}",
+                    body: """
+                    Bonjour,
+
+                    Voici les détails de l'exécution du pipeline :
+
+                    - **Nom du Job** : ${env.JOB_NAME}
+                    - **Numéro du Build** : ${env.BUILD_NUMBER}
+                    - **Statut du Build** : ${buildStatus}
+                    - **URL du Build** : ${env.BUILD_URL}
+
+                    Merci,
+                    L'équipe Jenkins
+                    """,
+                    to: 'olyrarivomanana@gmail.com',
+                    mimeType: 'text/html',
+                    replyTo: 'no-reply@gmail.com'
+                )
                 }
             }
         }
