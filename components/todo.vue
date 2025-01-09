@@ -64,7 +64,7 @@ function submit(donne){
                 placeholder="Add Todo" v-model="karim">
               <button
                 class="flex-no-shrink p-2 border-2 rounded-lg text-teal border-teal text-white bg-blue-500 hover:bg-blue-700"
-                @click="submit(karim)">Add</button>
+                @click="submit(karim)">Ajouter</button>
             </div>
           </div>
           <div>
