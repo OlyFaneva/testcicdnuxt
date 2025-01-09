@@ -71,7 +71,7 @@ function submit(donne){
 
                   <div v-for="item in productCount" :key="item.id" class="flex mb-4 items-center">
                       <p class="w-full text-grey-darkest font-semibold text-gray-600"> {{ item.content }} </p>
-                      <NuxtLink class="flex-no-shrink w-1/3 p-2 ml-4 mr-2 border-2 rounded-lg border-grey  bg-green-400" :to="`/${item.id}`" > Custom</NuxtLink>
+                      <NuxtLink class="flex-no-shrink w-1/3 p-2 ml-4 mr-2 border-2 rounded-lg border-grey  bg-yellow-400" :to="`/${item.id}`" > Custom</NuxtLink>
                       <button class="flex-no-shrink p-2 ml-2 border-2 rounded-lg text-red border-red text-white bg-red-500 hover:bg-red-700" @click="remove(item.id)">Remove</button>
                   </div>
               </div>
