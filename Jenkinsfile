@@ -12,7 +12,19 @@ pipeline {
         SMTP_PASS = 'tkbnzycggxoskhwa'
     }
 
+    // Désactive le checkout automatique par défaut
+    options {
+        skipDefaultCheckout()
+    }
+
     stages {
+        stage('Prepare Workspace') {
+            steps {
+                // Supprime tout le contenu du workspace
+                deleteDir()
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 script {
@@ -47,7 +59,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    echo "Pushing Docker image to Docker Hub"
+                    echo 'Pushing Docker image to Docker Hub'
                     withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
                         sh '''
                             docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
@@ -57,11 +69,10 @@ pipeline {
             }
         }
 
-
         stage('Run Ansible Playbook') {
             steps {
                 script {
-                    echo "Running Ansible playbook"
+                    echo 'Running Ansible playbook'
                     sh '''
                         ansible-playbook -i hosts.ini deploy.yml -vvv
                     '''
@@ -91,7 +102,7 @@ pipeline {
                         Merci,
                         L'équipe Jenkins
                         """,
-                        to: "olyrarivomanana@gmail.com",
+                        to: 'olyrarivomanana@gmail.com',
                         mimeType: 'text/html',
                         replyTo: 'no-reply@gmail.com'
                     )
@@ -101,10 +112,10 @@ pipeline {
             }
         }
         success {
-            echo "Pipeline succeeded"
+            echo 'Pipeline succeeded'
         }
         failure {
-            echo "Pipeline failed"
+            echo 'Pipeline failed'
         }
     }
 }
